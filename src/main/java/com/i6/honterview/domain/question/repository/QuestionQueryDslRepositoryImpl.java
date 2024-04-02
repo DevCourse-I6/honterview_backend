@@ -19,6 +19,7 @@ import org.springframework.util.StringUtils;
 
 import com.i6.honterview.common.exception.CustomException;
 import com.i6.honterview.common.exception.ErrorCode;
+import com.i6.honterview.domain.question.dto.request.QuestionPageRequest;
 import com.i6.honterview.domain.question.entity.Question;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -34,16 +35,16 @@ public class QuestionQueryDslRepositoryImpl implements QuestionQueryDslRepositor
 	private final JPAQueryFactory queryFactory;
 
 	@Override
-	public Page<Question> findQuestionsByKeywordAndCategoryNamesWithPage(Pageable pageable, String query,
-		List<String> categoryNames, String orderType) {
+	public Page<Question> findQuestionsByKeywordAndCategoryNamesWithPage(QuestionPageRequest request) {
+		Pageable pageable = request.getPageable();
 		// 조건 생성 - 카테고리 ID 조회 조건, 검색 조건 및 결합
-		BooleanExpression categoryCondition = createCategoryCondition(categoryNames);
-		BooleanExpression searchCondition = createSearchCondition(query);
+		BooleanExpression categoryCondition = createCategoryCondition(request.getCategoryNames());
+		BooleanExpression searchCondition = createSearchCondition(request.getQuery());
 		BooleanExpression combinedCondition =
 			searchCondition != null ? searchCondition.and(categoryCondition) : categoryCondition;
 
 		// 질문 조회
-		List<Question> questions = fetchQuestions(pageable, combinedCondition, orderType);
+		List<Question> questions = fetchQuestions(pageable, combinedCondition, request.getOrderType());
 
 		// 카운트 쿼리
 		JPAQuery<Long> countQuery = fetchQuestionCount(combinedCondition);
