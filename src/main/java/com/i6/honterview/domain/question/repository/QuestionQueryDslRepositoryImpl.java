@@ -5,6 +5,8 @@ import static com.i6.honterview.domain.question.entity.QQuestion.*;
 import static com.i6.honterview.domain.question.entity.QQuestionBookmark.*;
 import static com.i6.honterview.domain.question.entity.QQuestionCategory.*;
 import static com.i6.honterview.domain.question.entity.QQuestionHeart.*;
+import static com.nimbusds.oauth2.sdk.util.StringUtils.*;
+import static com.querydsl.core.types.dsl.Expressions.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +17,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
 
 import com.i6.honterview.common.exception.CustomException;
 import com.i6.honterview.common.exception.ErrorCode;
@@ -47,8 +48,7 @@ public class QuestionQueryDslRepositoryImpl implements QuestionQueryDslRepositor
 		List<Question> questions = fetchQuestions(pageable, combinedCondition, request.getOrderType());
 
 		// 카운트 쿼리
-		JPAQuery<Long> countQuery = fetchQuestionCount(combinedCondition);
-
+		JPAQuery<Long> countQuery = fetchQuestionCount(categoryCondition);
 		return PageableExecutionUtils.getPage(questions, pageable, countQuery::fetchOne);
 	}
 
@@ -58,7 +58,6 @@ public class QuestionQueryDslRepositoryImpl implements QuestionQueryDslRepositor
 		if (categoryCondition == null) {
 			return new ArrayList<>();
 		}
-
 		return queryFactory
 			.selectFrom(question)
 			.where(categoryCondition)
@@ -77,8 +76,14 @@ public class QuestionQueryDslRepositoryImpl implements QuestionQueryDslRepositor
 		return categoryIds.isEmpty() ? null : question.questionCategories.any().category.id.in(categoryIds);
 	}
 
-	private BooleanExpression createSearchCondition(String query) {
-		return StringUtils.hasText(query) ? question.content.containsIgnoreCase(query) : null;
+	public BooleanExpression createSearchCondition(String word) {
+		if (isBlank(word)) {
+			return null;
+		}
+		final String formattedSearchWord = "\"" + word + "\"";
+		return numberTemplate(Double.class, "function('match_against', {0}, {1})",
+			question.content, formattedSearchWord)
+			.gt(0);
 	}
 
 	private List<Question> fetchQuestions(Pageable pageable, BooleanExpression condition, String orderType) {
@@ -144,5 +149,4 @@ public class QuestionQueryDslRepositoryImpl implements QuestionQueryDslRepositor
 
 		return PageableExecutionUtils.getPage(questions, pageable, countQuery::fetchOne);
 	}
-
 }
