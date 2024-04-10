@@ -1,0 +1,71 @@
+spring:
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: create
+
+  sql:
+    init:
+      mode: never
+
+  security:
+    oauth2:
+      client:
+        provider:
+          kakao:
+            authorization-uri: https://kauth.kakao.com/oauth/authorize
+            token-uri: https://kauth.kakao.com/oauth/token
+            user-info-uri: https://kapi.kakao.com/v2/user/me
+            user-name-attribute: id
+          github:
+            authorization-uri: https://github.com/login/oauth/authorize
+            token-uri: https://github.com/login/oauth/access_token
+            user-info-uri: https://api.github.com/user
+            user-name-attribute: login
+
+        registration:
+          kakao:
+            client-id: kakao_client_id
+            client-secret: kakao_client_secret
+            client-authentication-method: client_secret_post
+            redirect-uri: http://localhost:8080/login/oauth2/code/kakao
+            authorization-grant-type: authorization_code
+            client-name: kakao
+            scope:
+              - account_email
+              - profile_nickname
+          google:
+            client-id: google_client_id
+            client-secret: google_client_secret
+            scope:
+              - email
+              - profile
+          github:
+            client-id: github_client_id
+            client-secret: github_client_secret
+            redirect-uri: http://localhost:8080/login/oauth2/code/github
+
+  cloud:
+    aws:
+      credentials:
+        access-key: aws-access-key
+        secret-key: aws-secret-key
+      region:
+        static: aws-region
+      s3:
+        bucket: bucket-name
+
+
+jwt:
+  secret-key: EENY5W0eegTf1naQB2eDeyCLl5kRS2b8xa5c4qLdS0hmVjtbvo8tOyhPMcAmtPuQ # 테스트 환경에서만 사용되는 secret-key
+  access-expiry-seconds: 1800 #30 min
+  refresh-expiry-seconds: 604800 #7 day
+
+openai:
+  secret-key: openai-key
+  model: gpt-model
+  end-point: https://api.openai.com/v1/chat/completions
+
+logging:
+  level:
+    org.hibernate.SQL: DEBUG
