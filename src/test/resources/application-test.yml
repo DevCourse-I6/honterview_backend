@@ -57,7 +57,7 @@ spring:
 
 
 jwt:
-  secret-key: EENY5W0eegTf1naQB2eDeyCLl5kRS2b8xa5c4qLdS0hmVjtbvo8tOyhPMcAmtPuQ # 테스트 환경에서만 사용되는 secret-key
+  secret-key: EENY5W0eegTf1naQB2eDeyCLl5kRS2b8xa5c4qLdS0hmVjtbvo8tOyhPMcAmtPuQ # 테스트 환경에서만 사용되는 secret-key (빙터파크 때 쓰던거..)
   access-expiry-seconds: 1800 #30 min
   refresh-expiry-seconds: 604800 #7 day
 

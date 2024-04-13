@@ -3,6 +3,7 @@ package com.i6.honterview.domain.interview.repository;
 import static com.i6.honterview.domain.interview.entity.QInterview.*;
 import static com.i6.honterview.domain.interview.entity.QInterviewQuestion.*;
 
+import java.util.Comparator;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
@@ -11,6 +12,7 @@ import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 
 import com.i6.honterview.domain.interview.entity.Interview;
+import com.i6.honterview.domain.interview.entity.InterviewQuestion;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
@@ -32,6 +34,9 @@ public class InterviewQueryDslRepositoryImpl implements InterviewQueryDslReposit
 			.offset(pageable.getOffset())
 			.limit(pageable.getPageSize())
 			.fetch();
+
+		interviews.forEach(interview -> interview.getInterviewQuestions()
+			.sort(Comparator.comparing(InterviewQuestion::getId)));
 
 		JPAQuery<Long> countQuery = queryFactory
 			.select(interview.count())
