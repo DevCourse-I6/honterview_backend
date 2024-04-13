@@ -6,11 +6,11 @@ import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import com.i6.honterview.domain.question.dto.request.QuestionPageRequest;
 import com.i6.honterview.domain.question.entity.Question;
 
 public interface QuestionQueryDslRepository {
-	Page<Question> findQuestionsByKeywordAndCategoryNamesWithPage(Pageable pageable, String query,
-		List<String> categoryNames, String orderType);
+	Page<Question> findQuestionsByKeywordAndCategoryNamesWithPage(QuestionPageRequest request);
 
 	List<Question> findQuestionsByCategoryNames(List<String> categoryNames);
 

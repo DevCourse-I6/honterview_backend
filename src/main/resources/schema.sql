@@ -52,7 +52,8 @@ CREATE TABLE IF NOT EXISTS category
     id            BIGINT PRIMARY KEY AUTO_INCREMENT,
     category_name VARCHAR(20) NOT NULL,
     created_at    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at    TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    updated_at    TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    UNIQUE INDEX category_unique_idx_name (category_name)
 );
 
 CREATE TABLE IF NOT EXISTS question
@@ -63,7 +64,9 @@ CREATE TABLE IF NOT EXISTS question
     hearts_count BIGINT      NOT NULL DEFAULT 0,
     created_by   VARCHAR(20) NOT NULL,
     created_at   TIMESTAMP            DEFAULT CURRENT_TIMESTAMP,
-    updated_at   TIMESTAMP            DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    updated_at   TIMESTAMP            DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX question_idx_content (content),
+    FULLTEXT INDEX question_fulltext_idx_content (content) WITH PARSER ngram
 );
 
 CREATE TABLE IF NOT EXISTS question_category

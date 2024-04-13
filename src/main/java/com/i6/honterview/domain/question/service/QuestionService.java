@@ -46,13 +46,8 @@ public class QuestionService {// TODO: 멤버&관리자 연동
 
 	@Transactional(readOnly = true)
 	public PageResponse<QuestionWithCategoriesResponse> getQuestions(QuestionPageRequest request) {
-		Pageable pageable = request.getPageable();
 		Page<Question> questions = questionRepository.
-			findQuestionsByKeywordAndCategoryNamesWithPage(
-				pageable,
-				request.getQuery(),
-				request.getCategoryNames(),
-				request.getOrderType());
+			findQuestionsByKeywordAndCategoryNamesWithPage(request);
 		return PageResponse.of(questions, QuestionWithCategoriesResponse::from);
 	}
 
